@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#07090d">
+  <title>VXM Sizer</title>
+  <style>
+    :root{
+      color-scheme: dark;
+      --bg:#07090d;
+      --panel:rgba(20,24,32,.82);
+      --panel-strong:#141820;
+      --field:#0f1319;
+      --line:rgba(255,255,255,.09);
+      --text:#f7f9fc;
+      --muted:#98a2b3;
+      --soft:#c7ced8;
+      --accent:#8ee3a0;
+      --accent-2:#79a7ff;
+      --warn:#ffd479;
+      --danger:#ff8f8f;
+      --shadow:0 24px 60px rgba(0,0,0,.35);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{
+      -webkit-text-size-adjust:100%;
+      background:var(--bg);
+    }
+
+    body{
+      margin:0;
+      min-height:100%;
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at 10% -10%, rgba(121,167,255,.13), transparent 34%),
+        radial-gradient(circle at 100% 0%, rgba(142,227,160,.09), transparent 28%),
+        var(--bg);
+      color:var(--text);
+      padding:
+        max(22px, env(safe-area-inset-top))
+        16px
+        max(28px, env(safe-area-inset-bottom));
+    }
+
+    button,input{font:inherit}
+
+    .app{
+      width:100%;
+      max-width:560px;
+      margin:0 auto;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:14px;
+      margin:8px 2px 22px;
+    }
+
+    .eyebrow{
+      color:var(--accent);
+      font-size:12px;
+      font-weight:700;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      margin-bottom:7px;
+    }
+
+    h1{
+      margin:0;
+      font-size:32px;
+      line-height:1.04;
+      letter-spacing:-.8px;
+      font-weight:780;
+    }
+
+    .sub{
+      margin:8px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+      max-width:360px;
+    }
+
+    .badge{
+      flex:0 0 auto;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+      min-height:34px;
+      padding:0 11px;
+      border:1px solid var(--line);
+      border-radius:999px;
+      background:rgba(255,255,255,.035);
+      color:var(--soft);
+      font-size:12px;
+      font-weight:650;
+      white-space:nowrap;
+    }
+
+    .badge-dot{
+      width:7px;
+      height:7px;
+      border-radius:50%;
+      background:var(--accent);
+      box-shadow:0 0 0 4px rgba(142,227,160,.08);
+    }
+
+    .panel{
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      background:linear-gradient(180deg, rgba(255,255,255,.035), rgba(255,255,255,.015)), var(--panel);
+      box-shadow:var(--shadow);
+      backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      overflow:hidden;
+    }
+
+    .inputs{
+      padding:16px;
+      margin-bottom:14px;
+    }
+
+    .field + .field{
+      margin-top:14px;
+    }
+
+    label{
+      display:block;
+      color:var(--muted);
+      font-size:12px;
+      font-weight:650;
+      letter-spacing:.02em;
+      margin:0 0 7px 2px;
+    }
+
+    .input-shell{
+      position:relative;
+      display:flex;
+      align-items:center;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:var(--field);
+      min-height:56px;
+      transition:border-color .18s ease, transform .18s ease, background .18s ease;
+    }
+
+    .input-shell:focus-within{
+      border-color:rgba(121,167,255,.62);
+      background:#111722;
+      transform:translateY(-1px);
+    }
+
+    .prefix{
+      padding-left:15px;
+      color:var(--muted);
+      font-size:18px;
+      font-weight:650;
+      user-select:none;
+    }
+
+    input{
+      width:100%;
+      min-width:0;
+      border:0;
+      outline:0;
+      background:transparent;
+      color:var(--text);
+      font-size:22px;
+      font-weight:650;
+      padding:14px 15px;
+      min-height:54px;
+      appearance:none;
+      -webkit-appearance:none;
+    }
+
+    input::placeholder{
+      color:#596273;
+      opacity:1;
+      font-weight:500;
+    }
+
+    .result-panel{
+      padding:19px 18px 17px;
+      margin-bottom:14px;
+      position:relative;
+      isolation:isolate;
+    }
+
+    .result-panel::after{
+      content:"";
+      position:absolute;
+      inset:auto -70px -90px auto;
+      width:220px;
+      height:220px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(142,227,160,.09), transparent 68%);
+      z-index:-1;
+      pointer-events:none;
+    }
+
+    .label{
+      color:var(--muted);
+      text-transform:uppercase;
+      letter-spacing:.12em;
+      font-size:11px;
+      font-weight:750;
+    }
+
+    .hero{
+      display:flex;
+      align-items:baseline;
+      gap:10px;
+      margin:7px 0 5px;
+      min-width:0;
+    }
+
+    .hero-number{
+      font-size:68px;
+      line-height:.96;
+      letter-spacing:-3.2px;
+      font-weight:800;
+      min-width:0;
+      overflow-wrap:anywhere;
+      font-variant-numeric:tabular-nums;
+      transition:transform .18s ease, opacity .18s ease;
+    }
+
+    .hero-unit{
+      color:var(--muted);
+      font-size:19px;
+      font-weight:650;
+      letter-spacing:-.2px;
+    }
+
+    .status{
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.5;
+      min-height:39px;
+      margin-top:7px;
+    }
+
+    .status strong{
+      color:var(--soft);
+      font-weight:650;
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .metric{
+      min-width:0;
+      padding:13px;
+      border-radius:16px;
+      background:rgba(4,7,11,.42);
+      border:1px solid rgba(255,255,255,.055);
+    }
+
+    .metric-k{
+      color:var(--muted);
+      font-size:11px;
+      line-height:1.25;
+      margin-bottom:5px;
+    }
+
+    .metric-v{
+      color:var(--text);
+      font-size:18px;
+      line-height:1.2;
+      font-weight:700;
+      font-variant-numeric:tabular-nums;
+      overflow-wrap:anywhere;
+    }
+
+    .metric-v.accent{color:var(--accent)}
+
+    .scale-panel{
+      padding:16px 18px 17px;
+      margin-bottom:14px;
+    }
+
+    .scale-head{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      margin-bottom:13px;
+    }
+
+    .scale-value{
+      color:var(--accent);
+      font-size:14px;
+      font-weight:750;
+      font-variant-numeric:tabular-nums;
+    }
+
+    .track{
+      position:relative;
+      height:12px;
+      border-radius:999px;
+      background:#10151d;
+      border:1px solid rgba(255,255,255,.06);
+      overflow:hidden;
+    }
+
+    .track-fill{
+      width:0%;
+      height:100%;
+      border-radius:inherit;
+      background:linear-gradient(90deg, var(--accent-2), var(--accent));
+      transition:width .22s ease;
+    }
+
+    .track-glow{
+      position:absolute;
+      top:50%;
+      width:16px;
+      height:16px;
+      border-radius:50%;
+      background:#e7fff0;
+      border:3px solid rgba(142,227,160,.85);
+      box-shadow:0 0 18px rgba(142,227,160,.45);
+      transform:translate(-50%,-50%);
+      left:0%;
+      transition:left .22s ease;
+    }
+
+    .ticks{
+      display:flex;
+      justify-content:space-between;
+      color:var(--muted);
+      font-size:11px;
+      margin-top:9px;
+    }
+
+    .footer{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding:2px 3px 0;
+      color:#687383;
+      font-size:11px;
+      line-height:1.45;
+    }
+
+    .footer-note{
+      max-width:430px;
+    }
+
+    .pulse{
+      animation:pop .2s ease;
+    }
+
+    @keyframes pop{
+      0%{transform:scale(.985);opacity:.72}
+      100%{transform:scale(1);opacity:1}
+    }
+
+    @media(max-width:390px){
+      h1{font-size:29px}
+      .hero-number{font-size:58px}
+      .hero-unit{font-size:17px}
+      .badge{display:none}
+    }
+
+    @media(max-width:340px){
+      .metrics{grid-template-columns:1fr}
+      .hero-number{font-size:52px}
+    }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{
+        scroll-behavior:auto!important;
+        transition:none!important;
+        animation:none!important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="eyebrow">Mini VIX Futures</div>
+        <h1>VXM Position Sizer</h1>
+        <p class="sub">Enter capital and VX1. The app scales exposure from 0.5Ã at VX1 15 to 2.0Ã at VX1 25.</p>
+      </div>
+      <div class="badge"><span class="badge-dot"></span>Local calculator</div>
+    </header>
+
+    <section class="panel inputs" aria-label="Inputs">
+      <div class="field">
+        <label for="capital">TOTAL CAPITAL</label>
+        <div class="input-shell">
+          <span class="prefix">$</span>
+          <input id="capital" type="number" min="0" step="1000" inputmode="decimal" placeholder="100,000" autocomplete="off">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="vx1">VX1 PRICE</label>
+        <div class="input-shell">
+          <input id="vx1" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="20.00" autocomplete="off">
+        </div>
+      </div>
+    </section>
+
+    <section class="panel result-panel" aria-label="Result">
+      <div class="label">Contracts to short</div>
+      <div class="hero">
+        <div id="contracts" class="hero-number">â</div>
+        <div class="hero-unit">VXM</div>
+      </div>
+      <div id="status" class="status" aria-live="polite">Enter both inputs to calculate your position.</div>
+
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-k">Exposure multiplier</div>
+          <div id="multiplier" class="metric-v accent">â</div>
+        </div>
+        <div class="metric">
+          <div class="metric-k">Target short notional</div>
+          <div id="target" class="metric-v">â</div>
+        </div>
+        <div class="metric">
+          <div class="metric-k">Notional per VXM</div>
+          <div id="perContract" class="metric-v">â</div>
+        </div>
+        <div class="metric">
+          <div class="metric-k">Actual short notional</div>
+          <div id="actual" class="metric-v">â</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel scale-panel" aria-label="Exposure scale">
+      <div class="scale-head">
+        <div class="label">Exposure scale</div>
+        <div id="scaleValue" class="scale-value">â</div>
+      </div>
+      <div class="track" aria-hidden="true">
+        <div id="fill" class="track-fill"></div>
+        <div id="glow" class="track-glow"></div>
+      </div>
+      <div class="ticks">
+        <span>15 Â· 0.5Ã</span>
+        <span>20 Â· 1.25Ã</span>
+        <span>25 Â· 2.0Ã</span>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="footer-note">Scale is capped at 0.5Ã below VX1 15 and 2.0Ã above VX1 25. Whole contracts are rounded down.</div>
+    </footer>
+  </main>
+
+  <script>
+    (() => {
+      const $ = id => document.getElementById(id);
+
+      const capital = $("capital");
+      const vx1 = $("vx1");
+      const contracts = $("contracts");
+      const status = $("status");
+      const multiplierEl = $("multiplier");
+      const targetEl = $("target");
+      const perContractEl = $("perContract");
+      const actualEl = $("actual");
+      const scaleValue = $("scaleValue");
+      const fill = $("fill");
+      const glow = $("glow");
+
+      const money0 = new Intl.NumberFormat("en-US", {
+        style:"currency",
+        currency:"USD",
+        maximumFractionDigits:0
+      });
+
+      const clamp = (x, min, max) => Math.min(max, Math.max(min, x));
+
+      function animateResult(){
+        contracts.classList.remove("pulse");
+        void contracts.offsetWidth;
+        contracts.classList.add("pulse");
+      }
+
+      function reset(){
+        contracts.textContent = "â";
+        status.textContent = "Enter both inputs to calculate your position.";
+        multiplierEl.textContent = "â";
+        targetEl.textContent = "â";
+        perContractEl.textContent = "â";
+        actualEl.textContent = "â";
+        scaleValue.textContent = "â";
+        fill.style.width = "0%";
+        glow.style.left = "0%";
+      }
+
+      function calculate(){
+        const c = Number(capital.value);
+        const v = Number(vx1.value);
+
+        if (!(c > 0) || !(v > 0)){
+          reset();
+          return;
+        }
+
+        const rawMultiplier = 0.5 + (v - 15) * 0.15;
+        const m = clamp(rawMultiplier, 0.5, 2.0);
+        const target = c * m;
+        const notionalPerContract = v * 100;
+        const rawContracts = target / notionalPerContract;
+        const wholeContracts = Math.max(0, Math.floor(rawContracts));
+        const actual = wholeContracts * notionalPerContract;
+        const unused = Math.max(0, target - actual);
+
+        const progress = clamp(((m - 0.5) / 1.5) * 100, 0, 100);
+
+        const previous = contracts.textContent;
+        contracts.textContent = wholeContracts.toLocaleString();
+        if (previous !== contracts.textContent) animateResult();
+
+        multiplierEl.textContent = `${m.toFixed(2)}Ã`;
+        targetEl.textContent = money0.format(target);
+        perContractEl.textContent = money0.format(notionalPerContract);
+        actualEl.textContent = money0.format(actual);
+        scaleValue.textContent = `${m.toFixed(2)}Ã`;
+
+        fill.style.width = `${progress}%`;
+        glow.style.left = `${progress}%`;
+
+        let note = "";
+        if (v < 15) note = " The scale is capped at 0.5Ã.";
+        if (v > 25) note = " The scale is capped at 2.0Ã.";
+
+        status.innerHTML =
+          `Raw size <strong>${rawContracts.toFixed(2)}</strong> contracts Â· ` +
+          `<strong>${money0.format(unused)}</strong> target notional unused after rounding.${note}`;
+
+        try{
+          localStorage.setItem("vxm_capital", capital.value);
+          localStorage.setItem("vxm_vx1", vx1.value);
+        }catch(e){}
+      }
+
+      try{
+        capital.value = localStorage.getItem("vxm_capital") || "";
+        vx1.value = localStorage.getItem("vxm_vx1") || "";
+      }catch(e){}
+
+      capital.addEventListener("input", calculate);
+      vx1.addEventListener("input", calculate);
+
+      calculate();
+    })();
+  </script>
+</body>
+</html>
